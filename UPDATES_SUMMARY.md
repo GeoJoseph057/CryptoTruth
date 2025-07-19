@@ -3,6 +3,7 @@
 ## 📋 Overview
 This document summarizes all the updates made to the CryptoTruth MVP project with the improved smart contract implementation.
 
+
 ## 🏗️ Smart Contract Updates
 
 ### GUIToken.sol - Enhanced Features

@@ -1,7 +1,5 @@
 # 🚀 CryptoTruth MVP Deployment Guide
 
-
-
 This guide will walk you through deploying the complete CryptoTruth MVP to production.
 
 ## 📋 Prerequisites
