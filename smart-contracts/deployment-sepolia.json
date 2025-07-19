@@ -1,0 +1,14 @@
+{
+  "network": "sepolia",
+  "deployer": "0x2f905Ad9eF45F90E327981856a43C643513300fC",
+  "guiToken": "0xe2eF19107a119C55EaC4D173BC987F124C7E4C4a",
+  "rumorVerification": "0xF2B98f1d08BFd22131550d08121Cb0b9c21681a1",
+  "deploymentTime": "2025-07-17T13:14:01.971Z",
+  "chainId": 11155111,
+  "testResults": {
+    "faucetWorking": true,
+    "rumorSubmissionWorking": true,
+    "totalRumors": "1",
+    "activeRumors": 1
+  }
+}

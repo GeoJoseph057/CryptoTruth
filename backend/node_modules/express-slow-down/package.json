@@ -1,0 +1,50 @@
+{
+  "name": "express-slow-down",
+  "version": "1.6.0",
+  "description": "Basic IP rate-limiting middleware for Express that slows down responses rather than blocking the user.",
+  "homepage": "https://github.com/nfriedly/express-slow-down",
+  "author": {
+    "name": "Nathan Friedly",
+    "url": "http://nfriedly.com/"
+  },
+  "repository": "nfriedly/express-slow-down",
+  "license": "MIT",
+  "main": "lib/express-slow-down.js",
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "express-rate-limit",
+    "express",
+    "rate",
+    "limit",
+    "ratelimit",
+    "rate-limit",
+    "middleware",
+    "ip",
+    "auth",
+    "authorization",
+    "security",
+    "brute",
+    "force",
+    "bruteforce",
+    "brute-force",
+    "attack"
+  ],
+  "devDependencies": {
+    "body-parser": "^1.20.0",
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "express": "^4.17.1",
+    "husky": "^4.3.5",
+    "jest": "^29.0.3",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0",
+    "supertest": "^6.2.4"
+  },
+  "scripts": {
+    "test": "eslint . && jest",
+    "precommit": "pretty-quick --staged"
+  }
+}

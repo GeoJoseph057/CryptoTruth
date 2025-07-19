@@ -1,0 +1,33 @@
+{
+  "name": "cryptotruth-test-suite",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for CryptoTruth platform functionality",
+  "main": "test-functions.js",
+  "scripts": {
+    "test": "node test-functions.js",
+    "test:backend": "node test-functions.js --category backend",
+    "test:contracts": "node test-functions.js --category contracts",
+    "test:frontend": "node test-functions.js --category frontend",
+    "test:integration": "node test-functions.js --category integration",
+    "test:security": "node test-functions.js --category security",
+    "test:features": "node test-functions.js --category features",
+    "test:performance": "node test-functions.js --category performance",
+    "test:verbose": "node test-functions.js --verbose"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "ethers": "^6.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": [
+    "cryptotruth",
+    "testing",
+    "blockchain",
+    "crypto",
+    "verification"
+  ],
+  "author": "CryptoTruth Team",
+  "license": "MIT"
+}

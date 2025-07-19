@@ -1,0 +1,6 @@
+"use client";
+// src/wallets/walletConnectors/zealWallet/zealWallet.svg
+var zealWallet_default = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyOCAyOCI+PHBhdGggZmlsbD0iIzBGRiIgZD0iTTAgMGgyOHYyOEgweiIvPjxwYXRoIGZpbGw9IiMwQjE4MjEiIGQ9Ik02LjUxIDIxLjQ5aDE0Ljk4di02Ljc0SDkuNTA2YTIuOTk2IDIuOTk2IDAgMCAwLTIuOTk2IDIuOTk1djMuNzQ1Wk0yMS40OSA2LjUxSDYuNTF2Ni43NDFoMTEuOTg0YTIuOTk2IDIuOTk2IDAgMCAwIDIuOTk2LTIuOTk2VjYuNTFaIi8+PC9zdmc+";
+export {
+  zealWallet_default as default
+};
