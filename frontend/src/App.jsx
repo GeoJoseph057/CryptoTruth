@@ -8,8 +8,11 @@ import TruthBattles from './pages/TruthBattles';
 import ExpertOracles from './pages/ExpertOracles';
 import PortfolioShield from './pages/PortfolioShield';
 import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
+import ToastContainer from './components/Common/ToastContainer';
+
 
 // Mock data and handlers for now (to be replaced with backend/API)
 import { Search, Clock, CheckCircle, XCircle } from 'lucide-react';
@@ -63,11 +66,22 @@ const rumorsData = [
 ];
 
 function App() {
+  const { address, isConnected } = useAccount();
   const [rumors, setRumors] = useState(rumorsData);
+
+  // Show toast when wallet connects
+  useEffect(() => {
+    if (isConnected && address) {
+      window.showToast(`Wallet connected: ${address.slice(0, 6)}...${address.slice(-4)}`, 'success', 3000);
+    }
+  }, [isConnected, address]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [newRumor, setNewRumor] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState('');
+  const [category, setCategory] = useState('Other');
+  const [tags, setTags] = useState('');
+  const [duration, setDuration] = useState(24);
   const [userBalance, setUserBalance] = useState(125.5);
   const [leaderboard, setLeaderboard] = useState([
     { rank: 1, address: "0x1234...5678", reputation: 98.5, accuracy: 94.2, totalEarned: 2450.5 },
@@ -119,6 +133,23 @@ function App() {
   ]);
   const categories = ['all', 'Price Prediction', 'Technical', 'Listings', 'Regulations', 'Partnerships'];
 
+  // Fetch rumors from backend on component mount
+  useEffect(() => {
+    const fetchRumors = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/rumors`);
+        if (response.ok) {
+          const data = await response.json();
+          setRumors(data.rumors || []);
+        }
+      } catch (error) {
+        console.error('Error fetching rumors:', error);
+      }
+    };
+
+    fetchRumors();
+  }, []);
+
   const filteredRumors = rumors.filter(rumor => {
     const matchesCategory = selectedCategory === 'all' || rumor.category === selectedCategory;
     const matchesSearch = rumor.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -127,9 +158,26 @@ function App() {
   });
 
   const handleVote = (rumorId, vote) => {
-    setRumors(prev => prev.map(rumor =>
-      rumor.id === rumorId ? { ...rumor, userVoted: vote } : rumor
-    ));
+    setRumors(prev => prev.map(rumor => {
+      if (rumor.id === rumorId) {
+        // Check if user already voted
+        if (rumor.userVoted !== null) {
+          window.showToast('You have already voted on this rumor!', 'warning', 3000);
+          return rumor;
+        }
+
+        // Update vote counts and user vote
+        const updatedRumor = { ...rumor, userVoted: vote };
+        if (vote === 'true') {
+          updatedRumor.trueVotes += 1;
+        } else {
+          updatedRumor.falseVotes += 1;
+        }
+        window.showToast(`Vote ${vote === 'true' ? 'True' : 'False'} recorded successfully!`, 'success', 3000);
+        return updatedRumor;
+      }
+      return rumor;
+    }));
   };
 
   const analyzeRumor = (content) => {
@@ -140,27 +188,56 @@ function App() {
     }
   };
 
-  const handleSubmitRumor = () => {
+  const handleSubmitRumor = async () => {
     if (!newRumor.trim()) return;
-    const newRumorData = {
-      id: rumors.length + 1,
-      content: newRumor,
-      category: "General",
-      tags: ["New"],
-      aiConfidence: Math.floor(Math.random() * 100),
-      timeLeft: "7 days",
-      trueVotes: 0,
-      falseVotes: 0,
-      totalReward: 0,
-      evidence: [],
-      comments: 0,
-      userVoted: null,
-      resolved: false
-    };
-    setRumors(prev => [newRumorData, ...prev]);
-    setNewRumor('');
-    setAiAnalysis('');
-    // Optionally, show notification or redirect
+
+    if (!isConnected) {
+      window.showToast('Please connect your wallet first', 'error', 4000);
+      return;
+    }
+
+    try {
+
+      const rumorData = {
+        content: newRumor,
+        category: category || "Other",
+        tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+        duration: duration || 24
+      };
+
+      // Add the new rumor to local state
+      const now = new Date();
+      const newRumorData = {
+        id: rumors.length + 1,
+        content: newRumor,
+        category: category || "Other",
+        tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+        aiConfidence: Math.floor(Math.random() * 100),
+        timeLeft: `${duration || 24} hours`,
+        trueVotes: 0,
+        falseVotes: 0,
+        totalReward: 0,
+        evidence: [],
+        comments: 0,
+        userVoted: null,
+        resolved: false,
+        createdAt: now.toISOString(),
+        submitter: address // Add the submitter address
+      };
+
+      // Add the new rumor to the local state
+      setRumors(prev => [newRumorData, ...prev]);
+      setNewRumor('');
+      setAiAnalysis('');
+      setCategory('Other');
+      setTags('');
+      setDuration(24);
+
+      window.showToast('Rumor submitted successfully!', 'success', 4000);
+    } catch (error) {
+      console.error('Error submitting rumor:', error);
+      window.showToast('Failed to submit rumor. Please try again.', 'error', 4000);
+    }
   };
 
   const getConfidenceColor = (confidence) => {
@@ -345,15 +422,22 @@ function App() {
                 analyzeRumor={analyzeRumor}
                 userBalance={userBalance}
                 handleSubmitRumor={handleSubmitRumor}
+                category={category}
+                setCategory={setCategory}
+                tags={tags}
+                setTags={setTags}
+                duration={duration}
+                setDuration={setDuration}
               />
             } />
             <Route path="/leaderboard" element={<Leaderboard leaderboard={leaderboard} />} />
             <Route path="/results" element={<Results results={results} />} />
-            <Route path="/profile" element={<Profile userStats={userStats} />} />
+            <Route path="/profile" element={<Profile rumors={rumors} />} />
           </Routes>
         </main>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 }

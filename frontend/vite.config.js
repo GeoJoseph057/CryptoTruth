@@ -8,6 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      buffer: 'buffer',
+      util: 'util',
     },
   },
   server: {
@@ -30,5 +32,8 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['buffer', 'util'],
   },
 })

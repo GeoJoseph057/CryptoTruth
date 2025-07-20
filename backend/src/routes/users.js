@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const Vote = require('../models/Vote');
+const Rumor = require('../models/Rumor');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
 const router = express.Router();
 
@@ -19,6 +20,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
       .limit(10)
       .populate('rumorId', 'content category outcome');
 
+    // Get user-submitted rumors
+    const userRumors = await Rumor.find({ submitter: user.walletAddress })
+      .sort({ createdAt: -1 })
+      .limit(20);
+
     res.json({
       user: {
         walletAddress: user.walletAddress,
@@ -31,10 +37,36 @@ router.get('/profile', authenticateToken, async (req, res) => {
         joinedAt: user.joinedAt,
         preferences: user.preferences
       },
-      recentVotes
+      recentVotes,
+      userRumors
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// Get user-submitted rumors
+router.get('/rumors', authenticateToken, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const rumors = await Rumor.find({ submitter: req.user.walletAddress })
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const total = await Rumor.countDocuments({ submitter: req.user.walletAddress });
+
+    res.json({
+      rumors,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      total
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch user rumors' });
   }
 });
 

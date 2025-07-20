@@ -28,6 +28,7 @@ const Header = () => {
   const { chain } = useNetwork();
   const navigate = useNavigate();
 
+
   // Get a simple network symbol
   const networkSymbol = chain?.name && networkIcons[chain.name.toLowerCase()] ? networkIcons[chain.name.toLowerCase()] : '🟢';
 
@@ -70,6 +71,7 @@ const Header = () => {
               <>
                 {/* Network symbol */}
                 <span className="text-2xl" title={chain?.name || 'Network'} aria-label="Network symbol">{networkSymbol}</span>
+
                 {/* Profile icon button */}
                 <button
                   className="p-2 rounded-full bg-slate-700 hover:bg-orange-500/20 text-white focus:outline-none focus:ring-2 focus:ring-orange-400"

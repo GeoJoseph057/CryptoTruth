@@ -118,7 +118,7 @@ const RumorCard = ({ rumor }) => {
           </div>
         </div>
 
-        {/* Voting Section */}
+                {/* Voting Section */}
         {isConnected && !isResolved && !isExpired && !hasVoted && (
           <VoteButtons rumorId={rumor.id} />
         )}
@@ -152,7 +152,7 @@ const RumorCard = ({ rumor }) => {
               <div>
                 <span className="text-gray-500">Submitted:</span>
                 <span className="ml-2 font-medium">
-                  {formatDistanceToNow(new Date(rumor.createdAt), { addSuffix: true })}
+                  {rumor.createdAt ? formatDistanceToNow(new Date(rumor.createdAt), { addSuffix: true }) : 'Unknown'}
                 </span>
               </div>
               <div>
@@ -160,6 +160,16 @@ const RumorCard = ({ rumor }) => {
                 <span className="ml-2 font-medium">
                   {((rumor.totalTrueStake + rumor.totalFalseStake) / 1e18).toFixed(2)} GUI
                 </span>
+              </div>
+              <div>
+                <span className="text-gray-500">Expires:</span>
+                <span className="ml-2 font-medium">
+                  {rumor.expiresAt ? formatDistanceToNow(new Date(rumor.expiresAt), { addSuffix: true }) : 'Unknown'}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">Category:</span>
+                <span className="ml-2 font-medium">{rumor.category || 'Other'}</span>
               </div>
             </div>
           </div>

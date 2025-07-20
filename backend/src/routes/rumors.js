@@ -77,8 +77,8 @@ router.post('/', authenticateToken, async (req, res) => {
     const lastRumor = await Rumor.findOne().sort({ rumorId: -1 });
     const rumorId = lastRumor ? lastRumor.rumorId + 1 : 1;
 
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + (duration || 24));
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + (duration || 24) * 60 * 60 * 1000);
 
     const rumor = new Rumor({
       rumorId,
@@ -86,6 +86,7 @@ router.post('/', authenticateToken, async (req, res) => {
       content,
       tags: tags || [],
       category: category || 'Other',
+      createdAt: now,
       expiresAt
     });
 

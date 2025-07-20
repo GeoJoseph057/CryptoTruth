@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Shield, DollarSign, Zap, Target, Bell, Search, Flame, Timer, CheckCircle, XCircle, TrendingUp, MessageCircle, Eye } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const ProgressBar = ({ value, max, color }) => (
   <div className="w-full bg-slate-700 rounded-full h-2 mt-2">
@@ -25,7 +26,29 @@ const CryptoHome = ({
   getConfidenceColor,
   getRiskColor,
   handleVote
-}) => (
+}) => {
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get('highlight');
+  const rumorRefs = useRef({});
+
+  // Scroll to highlighted rumor when component mounts
+  useEffect(() => {
+    if (highlightId && rumorRefs.current[highlightId]) {
+      setTimeout(() => {
+        rumorRefs.current[highlightId].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        // Add highlight effect
+        rumorRefs.current[highlightId].classList.add('ring-2', 'ring-orange-500', 'ring-opacity-50');
+        setTimeout(() => {
+          rumorRefs.current[highlightId].classList.remove('ring-2', 'ring-orange-500', 'ring-opacity-50');
+        }, 3000);
+      }, 500);
+    }
+  }, [highlightId]);
+
+  return (
   <div className="space-y-12 animate-fade-in">
     {/* Real-Time Impact Dashboard */}
     <section className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 shadow-xl">
@@ -133,6 +156,7 @@ const CryptoHome = ({
       {filteredRumors.map(rumor => (
         <div
           key={rumor.id}
+          ref={el => rumorRefs.current[rumor.id] = el}
           className={`bg-slate-800 rounded-xl p-6 border transition-all shadow-lg hover:scale-105 hover:shadow-orange-500/20 ${
             rumor.trending ? 'border-orange-500/50 shadow-orange-500/20' : 'border-slate-700 hover:border-orange-500/30'
           } animate-fade-in`}
@@ -203,6 +227,7 @@ const CryptoHome = ({
       ))}
     </section>
   </div>
-);
+  );
+};
 
 export default CryptoHome;

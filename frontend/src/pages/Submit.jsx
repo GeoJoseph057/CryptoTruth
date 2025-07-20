@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 
-const Submit = ({ newRumor, setNewRumor, aiAnalysis, analyzeRumor, userBalance, handleSubmitRumor }) => {
+const Submit = ({
+  newRumor,
+  setNewRumor,
+  aiAnalysis,
+  analyzeRumor,
+  userBalance,
+  handleSubmitRumor,
+  category,
+  setCategory,
+  tags,
+  setTags,
+  duration,
+  setDuration
+}) => {
   return (
     <div className="max-w-2xl mx-auto animate-fade-in">
       <section className="bg-slate-800 rounded-xl p-8 border border-slate-700 shadow-xl animate-fade-in">
@@ -22,21 +35,41 @@ const Submit = ({ newRumor, setNewRumor, aiAnalysis, analyzeRumor, userBalance, 
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Category</label>
-            <select className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500" aria-label="Category">
-              <option>Price Prediction</option>
-              <option>Technical</option>
-              <option>Listings</option>
-              <option>Regulations</option>
-              <option>Partnerships</option>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              aria-label="Category"
+            >
+              <option value="Other">Other</option>
+              <option value="ETF">ETF</option>
+              <option value="Price">Price</option>
+              <option value="Tech">Tech</option>
+              <option value="Regulation">Regulation</option>
+              <option value="Partnership">Partnership</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Tags (comma-separated)</label>
             <input
               type="text"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
               placeholder="BTC, ETH, DeFi..."
               className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               aria-label="Tags"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Duration (hours)</label>
+            <input
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(parseInt(e.target.value) || 24)}
+              min="1"
+              max="168"
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              aria-label="Duration"
             />
           </div>
           {aiAnalysis && (

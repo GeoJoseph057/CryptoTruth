@@ -11,6 +11,7 @@ const rumorRoutes = require('./routes/rumors');
 const userRoutes = require('./routes/users');
 const leaderboardRoutes = require('./routes/leaderboard');
 const statsRoutes = require('./routes/stats');
+const mockRoutes = require('./routes/mock');
 
 const app = express();
 
@@ -36,13 +37,26 @@ app.use(express.urlencoded({ extended: true }));
 // Logging
 app.use(morgan('combined'));
 
+// Database connection status middleware
+let dbConnected = false;
+
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cryptotruth', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cryptotruth', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('✅ Connected to MongoDB');
+    dbConnected = true;
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.log('⚠️  Starting server without database (using mock data)');
+    dbConnected = false;
+  }
+};
+
+connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -50,6 +64,9 @@ app.use('/api/rumors', rumorRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/stats', statsRoutes);
+
+// Mock routes for development (when database is not available)
+app.use('/api', mockRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
