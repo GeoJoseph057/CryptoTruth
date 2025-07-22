@@ -126,6 +126,6 @@ Core contract managing rumor verification, voting, and reward distribution.
 
 <div align="center">
 
-* Made with ❤️ *
+ Made with ❤️ 
 
 </div>
